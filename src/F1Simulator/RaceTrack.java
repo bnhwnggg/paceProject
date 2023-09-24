@@ -1,3 +1,4 @@
+package F1Simulator;
 import java.util.ArrayList;
 import java.util.List;
 import java.awt.Color;
@@ -17,6 +18,8 @@ public class RaceTrack {
             Color carColor = colors[i % colors.length];
             this.cars.add(new Car(carColor));
         }
+
+
     }
 
     // Simulate the movement of all cars for a single tick (unit of time)
@@ -34,7 +37,9 @@ public class RaceTrack {
 
     public void resetRace() {
         for (Car car : cars) {
-            car.reset();
+            if(!car.color.equals(Color.RED)){
+                car.reset();
+            }
         }
     }
     

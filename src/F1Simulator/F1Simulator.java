@@ -1,7 +1,9 @@
+package F1Simulator;
+import Betting.*;
+import Parser.*;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class F1Simulator {
     private JFrame frame;
@@ -11,20 +13,32 @@ public class F1Simulator {
     private Timer endRaceTimer;
     private JButton startButton;
     private JButton resetButton;
+    private BettingPanel bettingPanel;
+    private BettingPlatform bettingPlatform;
+    private JComboBox<Car> carChoicesComboBox;
+    private User user;
+    private JLabel userBalanceLabel;
 
+
+    //Create a Simulator
     public F1Simulator() {
         track = new RaceTrack(5, 100);
         graphicsTrack = new GraphicsRaceTrack(track.getCars(), 100);
 
         frame = new JFrame("F1 Simulator");
-        frame.setSize(1000, 1000);
+        frame.setSize(1000, 700);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLayout(new BorderLayout());
+
+        user = new User(1,"Hung","Bui","bnhwng","bnhwng1"); 
+        bettingPlatform = new BettingPlatform(user);
 
         setupUI();
         frame.setVisible(true);
     }
 
+
+    //setup UI
     private void setupUI() {
         JPanel buttonPanel = new JPanel();
         
@@ -39,8 +53,31 @@ public class F1Simulator {
 
         frame.add(buttonPanel, BorderLayout.SOUTH);
         frame.add(graphicsTrack, BorderLayout.CENTER);
+
+        bettingPanel = new BettingPanel();
+        frame.add(bettingPanel, BorderLayout.EAST);
+
+        carChoicesComboBox = new JComboBox<>(track.getCars().toArray(new Car[0]));
+        JButton placeBetButton = new JButton("Place Bet");
+        placeBetButton.addActionListener(e -> {
+        Car chosenCar = (Car) carChoicesComboBox.getSelectedItem();
+        bettingPlatform.placeBet(chosenCar);
+        });
+        userBalanceLabel = new JLabel("User Balance: " + user.getUserTotalCoin());
+
+        buttonPanel.add(new JLabel("Select car:"));
+        buttonPanel.add(carChoicesComboBox);
+        buttonPanel.add(placeBetButton);
+        buttonPanel.add(userBalanceLabel);
+
     }
 
+    private void updateBalanceLabel() {
+        userBalanceLabel.setText("User Balance: " + user.getUserTotalCoin());
+    }
+
+
+    //startRace button
     private void startRace(ActionEvent e) {
         raceTimer = new Timer(100, event -> {
             track.simulateTick();
@@ -66,13 +103,18 @@ public class F1Simulator {
             endRaceTimer.stop();
             graphicsTrack.recordRaceResults();
             System.out.println("Race should have ended."); // Debug message
+            RaceResult result = Parser.parse(track.getCars());
+            bettingPlatform.setRaceResult(result);
+
+            bettingPlatform.checkBet();
+            updateBalanceLabel();
         });
         endRaceTimer.setRepeats(false);
         endRaceTimer.start();
         System.out.println("End race timer started."); // Debug message
     }
     
-
+    //reset Button
     private void resetRace(ActionEvent e) {
         if (raceTimer != null) {
             raceTimer.stop();

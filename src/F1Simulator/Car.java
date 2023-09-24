@@ -1,22 +1,30 @@
+package F1Simulator;
 import java.awt.Color;
 
 public class Car {
     private double speed; 
     private int points;
     private double position; 
-    private Color color; // New Color property
+    Color color; // New Color property
     private boolean isBoosted;
     private int boostTimeRemaining;
 
     public Car(Color color) {
-        this.speed = 0.5; 
+        this.color = color; 
+    
+        // Check if the car color is red and set its speed higher for debugging purposes
+        if (this.color.equals(Color.RED)) {
+            this.speed = 5; // This will make the red car extremely fast compared to others
+        } else {
+            this.speed = 0.5; // Normal speed for other cars
+        }
+    
         this.points = 0;
         this.position = 0;
-        this.color = color; // Set the color in constructor
         this.isBoosted = false;
-        this.boostTimeRemaining = 0; 
-        
+        this.boostTimeRemaining = 0;
     }
+    
 
     // Method to move the car forward based on its speed
     public void move() {
@@ -26,10 +34,10 @@ public class Car {
     // Method to increase speed randomly
     public void randomSpeedBoost() {
         if (isBoosted || Math.random() < 0.2) { // 20% chance to boost
-            this.speed += 0.05; // Boost speed (you can adjust this value)
+            this.speed += 0.05; // Boost speed 
             if (!isBoosted) { // If not already boosted
                 isBoosted = true;
-                boostTimeRemaining = 5; // Boost lasts for 10 ticks (you can adjust this value)
+                boostTimeRemaining = 5; // Boost lasts for 5 ticks 
             }
         }
         updateBoostStatus();
@@ -52,6 +60,11 @@ public class Car {
             this.position -= trackCircumference; // Reset position
             this.points++; // Increase points
         }
+    }
+
+    @Override
+    public String toString() {
+        return getColorName();
     }
 
     public Color getColor() {
@@ -84,7 +97,9 @@ public class Car {
     }
 
     public void reset() {
-        this.speed = 1;
+        if (!this.color.equals(Color.RED)) {
+            this.speed = 0.5; // Original speed for non-red cars
+        }
         this.points = 0;
         this.position = 0;
         this.isBoosted = false;

@@ -1,3 +1,4 @@
+package F1Simulator;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
@@ -9,6 +10,7 @@ public class GraphicsRaceTrack extends JPanel {
     private List<String> raceResults = new ArrayList<>();
     private double remainingTime = 30;
 
+    //a graphic race track contains car and a finish line
     public GraphicsRaceTrack(List<Car> cars, double trackCircumference) {
         this.cars = cars;
         this.trackCircumference = trackCircumference;
@@ -23,7 +25,7 @@ public class GraphicsRaceTrack extends JPanel {
     
         // Draw finish line
         g.setColor(Color.BLACK);
-        g.drawLine(50, 250, 450, 250); // A horizontal line at the top of the track
+        g.drawLine(250, 250, 450, 250); // A horizontal line at the top of the track
     
         // Draw cars and their points
         int yOffset = 0;
@@ -53,29 +55,29 @@ public class GraphicsRaceTrack extends JPanel {
         g.drawString("Time left: " + String.format("%.1f", remainingTime) + "s", 50, 30);
     }
     
-public void recordRaceResults() {
+    public void recordRaceResults() {
         raceResults.clear();
         for (Car car : cars) {
             String result = car.getColorName() + ": " + car.getPoints() + " points";
             raceResults.add(result);
         }
         repaint();
-}
+    }
     
 
-public void setRemainingTime(double seconds) {
-    this.remainingTime = seconds;
-    repaint();
-}
+    public void setRemainingTime(double seconds) {
+        this.remainingTime = seconds;
+        repaint();
+    }
 
 
-public void resetGraphics() {
-    raceResults.clear();
-    repaint();
-}
+    public void resetGraphics() {
+        raceResults.clear();
+        repaint();
+    }
 
-public double getRemainingTime() {
-    return remainingTime;
-}
+    public double getRemainingTime() {
+        return remainingTime;
+    }
 
 }
